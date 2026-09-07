@@ -11,7 +11,7 @@ import {
 import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useTabBarHeight } from '@/hooks/useTabBarHeight';
 import * as Haptics from 'expo-haptics';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { useTranslation } from 'react-i18next';
@@ -246,7 +246,7 @@ export default function ChecklistScreen() {
   const isLoading = stageLoading || isLoadingProfile || tasksLoading;
 
   const { hapticsEnabled } = useHapticsPreference();
-  const tabBarHeight = useBottomTabBarHeight();
+  const tabBarHeight = useTabBarHeight();
 
   const rows = useMemo(() => buildRows(tasks), [tasks]);
 

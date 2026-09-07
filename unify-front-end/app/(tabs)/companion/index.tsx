@@ -27,7 +27,7 @@ import { useChatbotUsage } from '@/hooks/companion/useChatbotUsage';
 import { useCompanionReviewPrompt } from '@/hooks/companion/useCompanionReviewPrompt';
 import { useSendMessage } from '@/hooks/companion/useSendMessage';
 import { useCurrentUser } from '@/context/UserContext';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useTabBarHeight } from '@/hooks/useTabBarHeight';
 import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import {
@@ -87,7 +87,7 @@ export default function CompanionScreen() {
     conversationId?: string;
   }>();
   const router = useRouter();
-  const tabBarHeight = useBottomTabBarHeight();
+  const tabBarHeight = useTabBarHeight();
   const { showToast } = useToast();
   const { height: kbHeight, progress: kbProgress } =
     useReanimatedKeyboardAnimation();
@@ -561,7 +561,16 @@ export default function CompanionScreen() {
         )}
       </View>
 
-      <Animated.View style={[styles.stickyContainer, bottomAnimatedStyle]}>
+      <Animated.View
+        style={[
+          styles.stickyContainer,
+          // NativeTabs (iOS) floats above content rather than carving its own
+          // viewport, so lift the input/disclaimer above the bar. Android JS
+          // Tabs already excludes the bar from the viewport — no padding needed.
+          Platform.OS === 'ios' && { paddingBottom: tabBarHeight },
+          bottomAnimatedStyle,
+        ]}
+      >
         <View style={styles.bottomSection}>
           {/* Starter Prompts - Only show when no messages and no greeting */}
           {showEmptyState && (
@@ -709,6 +718,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
     backgroundColor: Theme.surfaceTextInput,
     color: Theme.black,
+    textAlignVertical: 'center',
   },
   disabledInput: {
     backgroundColor: '#f0f0f0',
